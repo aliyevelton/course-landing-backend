@@ -9,3 +9,4 @@ C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Domain\obj\D
 C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Domain\obj\Debug\net10.0\refint\CourseLanding.Domain.dll
 C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Domain\obj\Debug\net10.0\CourseLanding.Domain.pdb
 C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Domain\obj\Debug\net10.0\ref\CourseLanding.Domain.dll
+C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Domain\obj\Debug\net10.0\CourseLanding.Domain.sourcelink.json

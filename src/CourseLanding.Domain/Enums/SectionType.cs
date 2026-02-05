@@ -10,5 +10,6 @@ public enum SectionType
     Testimonials = 5,
     Pricing = 6,
     FAQ = 7,
-    CTA = 8
+    CTA = 8,
+    PlatformComparison = 9
 }
