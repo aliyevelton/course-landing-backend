@@ -51,6 +51,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CourseLandingDbContext>();
     await db.EnsureSeededAsync();
+    await db.EnsureMissingSectionsAsync();
 }
 
 app.Run();

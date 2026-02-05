@@ -43,7 +43,8 @@ public static class DbSeeder
             (SectionType.Pricing, 6, """{"title":"Simple, Transparent Pricing","subtitle":"One-time payment, lifetime access"}"""),
             (SectionType.FAQ, 7, """{"title":"Frequently Asked Questions","items":[{"question":"Do I need prior programming experience?","answer":"Basic Python knowledge is recommended. We cover fundamentals but assume you can write simple programs."},{"question":"How long do I have access?","answer":"Lifetime access. Once you enroll, the content is yours forever."},{"question":"Are there any prerequisites?","answer":"Familiarity with Python basics (variables, loops, functions) is helpful."}]}"""),
             (SectionType.PlatformComparison, 8, """{"title":"Why Buy on AppMillers?","subtitle":"Get more value when you learn directly from us instead of Udemy","ourPlatformName":"AppMillers","competitorName":"Udemy","rows":[{"feature":"24/7 Mentorship","onOurPlatform":true,"onCompetitor":false},{"feature":"Exclusive Community","onOurPlatform":true,"onCompetitor":false},{"feature":"Direct Instructor Access","onOurPlatform":true,"onCompetitor":false},{"feature":"Priority Support","onOurPlatform":true,"onCompetitor":false},{"feature":"Lifetime Access","onOurPlatform":true,"onCompetitor":true},{"feature":"Updated Content (instructor-controlled)","onOurPlatform":true,"onCompetitor":false},{"feature":"Certificate of Completion","onOurPlatform":true,"onCompetitor":true}]}"""),
-            (SectionType.CTA, 9, """{"headline":"Ready to Master DSA?","subheadline":"Start learning today and ace your next technical interview","ctaText":"Get Started","ctaUrl":"#pricing"}""")
+            (SectionType.CTA, 9, """{"headline":"Ready to Master DSA?","subheadline":"Start learning today and ace your next technical interview","ctaText":"Get Started","ctaUrl":"#pricing"}"""),
+            (SectionType.ContactUs, 10, """{"title":"Any other questions?","subtitle":"For payment questions or other related questions or if you didn't find a timeslot, please reach out to support@appmillers.com or via below contact form","formTitle":"Contact Us","formSubtitle":"Happy to answer any questions you might have!","email":"support@appmillers.com"}""")
         };
 
         foreach (var (type, order, payload) in sections)
@@ -108,5 +109,37 @@ public static class DbSeeder
         );
 
         await db.SaveChangesAsync(ct);
+    }
+
+    public static async Task EnsureMissingSectionsAsync(this CourseLandingDbContext db, CancellationToken ct = default)
+    {
+        var course = await db.Courses
+            .Include(c => c.Sections)
+            .FirstOrDefaultAsync(c => c.Slug == "data-structures-algorithms-python", ct);
+        if (course is null) return;
+
+        var contactUsPayload = """{"title":"Any other questions?","subtitle":"For payment questions or other related questions or if you didn't find a timeslot, please reach out to support@appmillers.com or via below contact form","formTitle":"Contact Us","formSubtitle":"Happy to answer any questions you might have!","email":"support@appmillers.com"}""";
+        var contactUsSection = course.Sections.FirstOrDefault(s => s.Type == SectionType.ContactUs);
+        var shouldSave = false;
+        if (contactUsSection is null)
+        {
+            db.Sections.Add(new Section
+            {
+                Id = Guid.NewGuid(),
+                CourseId = course.Id,
+                Type = SectionType.ContactUs,
+                Order = 10,
+                IsActive = true,
+                Payload = contactUsPayload
+            });
+            shouldSave = true;
+        }
+        else if (!contactUsSection.Payload.Contains("formTitle"))
+        {
+            contactUsSection.Payload = contactUsPayload;
+            shouldSave = true;
+        }
+        if (shouldSave)
+            await db.SaveChangesAsync(ct);
     }
 }

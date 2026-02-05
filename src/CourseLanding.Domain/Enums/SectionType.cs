@@ -11,5 +11,6 @@ public enum SectionType
     Pricing = 6,
     FAQ = 7,
     CTA = 8,
-    PlatformComparison = 9
+    PlatformComparison = 9,
+    ContactUs = 10
 }
