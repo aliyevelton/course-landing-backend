@@ -1,4 +1,5 @@
 using CourseLanding.Application.Interfaces;
+using CourseLanding.Infrastructure.Email;
 using CourseLanding.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,11 @@ public static class DependencyInjection
         services.AddDbContext<CourseLandingDbContext>(options =>
             options.UseSqlServer(connectionString));
 
+        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+        services.AddScoped<IEmailService, SmtpEmailService>();
+
         services.AddScoped<ICourseRepository, CourseRepository>();
+        services.AddScoped<ILeadRepository, LeadRepository>();
 
         return services;
     }

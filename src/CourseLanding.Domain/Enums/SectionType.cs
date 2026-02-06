@@ -12,5 +12,6 @@ public enum SectionType
     FAQ = 7,
     CTA = 8,
     PlatformComparison = 9,
-    ContactUs = 10
+    ContactUs = 10,
+    LeadCapture = 11
 }

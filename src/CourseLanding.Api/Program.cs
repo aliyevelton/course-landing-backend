@@ -3,6 +3,7 @@ using CourseLanding.Application;
 using CourseLanding.Infrastructure;
 using CourseLanding.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,8 +51,10 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CourseLandingDbContext>();
+    await db.Database.MigrateAsync();
     await db.EnsureSeededAsync();
     await db.EnsureMissingSectionsAsync();
+    await db.EnsureLeadCaptureSectionAsync();
 }
 
 app.Run();

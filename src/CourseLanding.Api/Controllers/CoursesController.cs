@@ -57,4 +57,20 @@ public class CoursesController : ControllerBase
         var result = await useCase.ExecuteAsync(slug, ct);
         return Ok(result);
     }
+
+    [HttpPost("{slug}/leads")]
+    public async Task<IActionResult> SubscribeLead(
+        string slug,
+        [FromBody] SubscribeLeadRequest request,
+        [FromServices] SubscribeLead useCase,
+        CancellationToken ct)
+    {
+        if (request is null)
+            return BadRequest(new { error = "Request body is required." });
+
+        var (success, error) = await useCase.ExecuteAsync(slug, request, ct);
+        if (!success)
+            return BadRequest(new { error = error ?? "Invalid request." });
+        return Ok(new { message = "Thanks for subscribing!" });
+    }
 }

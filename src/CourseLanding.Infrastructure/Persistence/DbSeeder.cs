@@ -142,4 +142,33 @@ public static class DbSeeder
         if (shouldSave)
             await db.SaveChangesAsync(ct);
     }
+
+    public static async Task EnsureLeadCaptureSectionAsync(this CourseLandingDbContext db, CancellationToken ct = default)
+    {
+        var course = await db.Courses
+            .Include(c => c.Sections)
+            .FirstOrDefaultAsync(c => c.Slug == "data-structures-algorithms-python", ct);
+        if (course is null) return;
+
+        if (course.Sections.Any(s => s.Type == SectionType.LeadCapture))
+            return;
+
+        foreach (var s in course.Sections.Where(x => x.Order >= 4).OrderByDescending(x => x.Order))
+        {
+            s.Order += 1;
+        }
+
+        var payload = """{"headline":"Get the Free Curriculum PDF","subheadline":"Get the full curriculum outline delivered to your inbox","ctaText":"Send me the PDF","source":"curriculum-pdf"}""";
+        db.Sections.Add(new Section
+        {
+            Id = Guid.NewGuid(),
+            CourseId = course.Id,
+            Type = SectionType.LeadCapture,
+            Order = 4,
+            IsActive = true,
+            Payload = payload
+        });
+
+        await db.SaveChangesAsync(ct);
+    }
 }

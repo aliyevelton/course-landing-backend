@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<CreateSection>();
         services.AddScoped<CreateModule>();
         services.AddScoped<CreatePricingPlan>();
+        services.AddScoped<SubscribeLead>();
         return services;
     }
 }

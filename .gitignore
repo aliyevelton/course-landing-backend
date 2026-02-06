@@ -1,0 +1,24 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Config with secrets (do not commit)
+src/CourseLanding.Api/appsettings.json
+src/CourseLanding.Api/appsettings.Development.json
+
+# User-specific
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# JetBrains
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/

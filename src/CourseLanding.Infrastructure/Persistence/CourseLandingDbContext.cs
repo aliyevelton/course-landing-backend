@@ -17,6 +17,7 @@ public class CourseLandingDbContext : DbContext
     public DbSet<PricingPlan> PricingPlans => Set<PricingPlan>();
     public DbSet<Testimonial> Testimonials => Set<Testimonial>();
     public DbSet<Purchase> Purchases => Set<Purchase>();
+    public DbSet<Lead> Leads => Set<Lead>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -19,4 +19,5 @@ public class Course
     public ICollection<PricingPlan> PricingPlans { get; set; } = new List<PricingPlan>();
     public ICollection<Testimonial> Testimonials { get; set; } = new List<Testimonial>();
     public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
+    public ICollection<Lead> Leads { get; set; } = new List<Lead>();
 }
