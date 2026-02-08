@@ -6,11 +6,9 @@
 [Ll]og/
 [Ll]ogs/
 
-# Config with secrets (do not commit)
 src/CourseLanding.Api/appsettings.json
 src/CourseLanding.Api/appsettings.Development.json
 
-# User-specific
 *.user
 *.suo
 *.userosscache

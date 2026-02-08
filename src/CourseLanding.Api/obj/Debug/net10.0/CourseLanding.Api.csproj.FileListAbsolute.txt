@@ -164,3 +164,6 @@ C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Api\bin\Debu
 C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Api\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Api\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Api\obj\Debug\net10.0\CourseLanding.Api.sourcelink.json
+C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Api\bin\Debug\net10.0\BouncyCastle.Cryptography.dll
+C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Api\bin\Debug\net10.0\MailKit.dll
+C:\Users\User\Desktop\course-landing-page\backend\src\CourseLanding.Api\bin\Debug\net10.0\MimeKit.dll

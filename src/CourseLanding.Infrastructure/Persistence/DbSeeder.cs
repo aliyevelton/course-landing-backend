@@ -91,12 +91,36 @@ public static class DbSeeder
             {
                 Id = Guid.NewGuid(),
                 CourseId = courseId,
+                Title = "Self-Paced",
+                Price = 39.99m,
+                Currency = "USD",
+                Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion"]""",
+                StripePriceId = null,
+                IsPopular = false,
+                IsActive = true
+            },
+            new PricingPlan
+            {
+                Id = Guid.NewGuid(),
+                CourseId = courseId,
                 Title = "Full Course Access",
                 Price = 49.99m,
                 Currency = "USD",
                 Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion","Q&A support"]""",
                 StripePriceId = null,
                 IsPopular = true,
+                IsActive = true
+            },
+            new PricingPlan
+            {
+                Id = Guid.NewGuid(),
+                CourseId = courseId,
+                Title = "VIP Bundle",
+                Price = 79.99m,
+                Currency = "USD",
+                Features = """["Everything in Full Course Access","1:1 mentorship session","Priority support","Interview prep materials","Resume review"]""",
+                StripePriceId = null,
+                IsPopular = false,
                 IsActive = true
             }
         );
@@ -165,6 +189,79 @@ public static class DbSeeder
             CourseId = course.Id,
             Type = SectionType.LeadCapture,
             Order = 4,
+            IsActive = true,
+            Payload = payload
+        });
+
+        await db.SaveChangesAsync(ct);
+    }
+
+    public static async Task EnsurePricingPlansAsync(this CourseLandingDbContext db, CancellationToken ct = default)
+    {
+        var course = await db.Courses.FirstOrDefaultAsync(c => c.Slug == "data-structures-algorithms-python", ct);
+        if (course is null) return;
+
+        var count = await db.PricingPlans.CountAsync(p => p.CourseId == course.Id, ct);
+        if (count >= 3) return;
+
+        var existingTitles = await db.PricingPlans
+            .Where(p => p.CourseId == course.Id)
+            .Select(p => p.Title)
+            .ToListAsync(ct);
+
+        if (!existingTitles.Contains("Self-Paced"))
+        {
+            db.PricingPlans.Add(new PricingPlan
+            {
+                Id = Guid.NewGuid(),
+                CourseId = course.Id,
+                Title = "Self-Paced",
+                Price = 39.99m,
+                Currency = "USD",
+                Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion"]""",
+                StripePriceId = null,
+                IsPopular = false,
+                IsActive = true
+            });
+        }
+
+        if (!existingTitles.Contains("VIP Bundle"))
+        {
+            db.PricingPlans.Add(new PricingPlan
+            {
+                Id = Guid.NewGuid(),
+                CourseId = course.Id,
+                Title = "VIP Bundle",
+                Price = 79.99m,
+                Currency = "USD",
+                Features = """["Everything in Full Course Access","1:1 mentorship session","Priority support","Interview prep materials","Resume review"]""",
+                StripePriceId = null,
+                IsPopular = false,
+                IsActive = true
+            });
+        }
+
+        await db.SaveChangesAsync(ct);
+    }
+
+    public static async Task EnsureFooterSectionAsync(this CourseLandingDbContext db, CancellationToken ct = default)
+    {
+        var course = await db.Courses
+            .Include(c => c.Sections)
+            .FirstOrDefaultAsync(c => c.Slug == "data-structures-algorithms-python", ct);
+        if (course is null) return;
+
+        if (course.Sections.Any(s => s.Type == SectionType.Footer))
+            return;
+
+        var payload = """{"brandName":"AppMillers","tagline":"Master Data Structures & Algorithms in Python","links":[{"label":"Pricing","href":"#pricing"},{"label":"Contact","href":"#contact"},{"label":"Community","href":"#community"}]}""";
+        var maxOrder = course.Sections.Max(s => s.Order);
+        db.Sections.Add(new Section
+        {
+            Id = Guid.NewGuid(),
+            CourseId = course.Id,
+            Type = SectionType.Footer,
+            Order = maxOrder + 1,
             IsActive = true,
             Payload = payload
         });

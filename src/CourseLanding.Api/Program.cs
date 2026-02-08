@@ -55,6 +55,8 @@ using (var scope = app.Services.CreateScope())
     await db.EnsureSeededAsync();
     await db.EnsureMissingSectionsAsync();
     await db.EnsureLeadCaptureSectionAsync();
+    await db.EnsurePricingPlansAsync();
+    await db.EnsureFooterSectionAsync();
 }
 
 app.Run();

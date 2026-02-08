@@ -20,6 +20,7 @@ public class GetCoursePricing
 
         var plans = course.PricingPlans
             .Where(p => p.IsActive)
+            .OrderBy(p => p.Price)
             .Select(p => new PricingPlanDto(
                 p.Id,
                 p.Title,
