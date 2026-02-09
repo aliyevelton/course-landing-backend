@@ -54,6 +54,7 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
     await db.EnsureSeededAsync();
     await db.EnsureMissingSectionsAsync();
+    await db.EnsureHeroVideoAsync();
     await db.EnsureLeadCaptureSectionAsync();
     await db.EnsurePricingPlansAsync();
     await db.EnsureFooterSectionAsync();

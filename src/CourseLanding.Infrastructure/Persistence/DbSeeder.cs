@@ -34,7 +34,7 @@ public static class DbSeeder
         // Sections
         var sections = new[]
         {
-            (SectionType.Hero, 0, """{"headline":"Master Data Structures & Algorithms in Python","subheadline":"The most comprehensive course for acing technical interviews and building strong programming foundations","primaryCtaText":"Enroll Now","primaryCtaUrl":"#pricing"}"""),
+            (SectionType.Hero, 0, """{"headline":"Master Data Structures & Algorithms in Python","subheadline":"The most comprehensive course for acing technical interviews and building strong programming foundations","primaryCtaText":"Enroll Now","primaryCtaUrl":"#pricing","videoUrl":"https://www.youtube.com/embed/sXYvlpmwwAA"}"""),
             (SectionType.TrustMetrics, 1, """{"metrics":[{"label":"Students","value":"50K+"},{"label":"Hours of Content","value":"45+"},{"label":"Exercises","value":"200+"},{"label":"4.8 Rating","value":"4.8/5"}]}"""),
             (SectionType.Audience, 2, """{"title":"Who Is This Course For?","description":"Whether you're preparing for interviews or leveling up your skills","bullets":["Software developers preparing for technical interviews","Computer science students","Self-taught programmers wanting to strengthen fundamentals","Anyone building a career in software engineering"]}"""),
             (SectionType.CurriculumPreview, 3, """{"title":"What You'll Learn","description":"A structured curriculum covering all essential DSA topics","ctaText":"View Full Curriculum"}"""),
@@ -165,6 +165,20 @@ public static class DbSeeder
         }
         if (shouldSave)
             await db.SaveChangesAsync(ct);
+    }
+
+    public static async Task EnsureHeroVideoAsync(this CourseLandingDbContext db, CancellationToken ct = default)
+    {
+        var course = await db.Courses
+            .Include(c => c.Sections)
+            .FirstOrDefaultAsync(c => c.Slug == "data-structures-algorithms-python", ct);
+        if (course is null) return;
+
+        var heroSection = course.Sections.FirstOrDefault(s => s.Type == SectionType.Hero);
+        if (heroSection is null || heroSection.Payload.Contains("videoUrl")) return;
+
+        heroSection.Payload = heroSection.Payload.TrimEnd().TrimEnd('}') + ",\"videoUrl\":\"https://www.youtube.com/embed/sXYvlpmwwAA\"}";
+        await db.SaveChangesAsync(ct);
     }
 
     public static async Task EnsureLeadCaptureSectionAsync(this CourseLandingDbContext db, CancellationToken ct = default)
