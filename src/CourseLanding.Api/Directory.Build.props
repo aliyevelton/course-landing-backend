@@ -1,8 +1,0 @@
-<Project>
-  <!-- Workaround: NuGet cross-platform bug - obj/project.assets.json can contain
-       Windows fallback paths that break Linux/CI builds (e.g. Railway).
-       See: https://github.com/dotnet/sdk/issues/42421 -->
-  <PropertyGroup>
-    <RestoreFallbackFolders></RestoreFallbackFolders>
-  </PropertyGroup>
-</Project>
