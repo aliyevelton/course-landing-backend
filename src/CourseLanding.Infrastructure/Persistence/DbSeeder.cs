@@ -34,11 +34,10 @@ public static class DbSeeder
         // Sections
         var sections = new[]
         {
-            (SectionType.Hero, 0, """{"headline":"Master Data Structures & Algorithms in Python","subheadline":"The most comprehensive course for acing technical interviews and building strong programming foundations","primaryCtaText":"Enroll Now","primaryCtaUrl":"#pricing","videoUrl":"https://www.youtube.com/embed/sXYvlpmwwAA"}"""),
-            (SectionType.TrustMetrics, 1, """{"metrics":[{"label":"Students","value":"50K+"},{"label":"Hours of Content","value":"45+"},{"label":"Exercises","value":"200+"},{"label":"4.8 Rating","value":"4.8/5"}]}"""),
+            (SectionType.Hero, 0, """{"headline":"Data Structures & Algorithms in Python","subheadline":"The most comprehensive course for acing technical interviews and building strong programming foundations","primaryCtaText":"Enroll Now","primaryCtaUrl":"#pricing","videoUrl":"https://www.youtube.com/embed/sXYvlpmwwAA"}"""),
+            (SectionType.TrustMetrics, 1, """{"metrics":[{"label":"Students","value":"200K+"},{"label":"Hours of Content","value":"45+"},{"label":"Exercises","value":"200+"},{"label":"4.8 Rating","value":"4.8/5"}]}"""),
             (SectionType.Audience, 2, """{"title":"Who Is This Course For?","description":"Whether you're preparing for interviews or leveling up your skills","bullets":["Software developers preparing for technical interviews","Computer science students","Self-taught programmers wanting to strengthen fundamentals","Anyone building a career in software engineering"]}"""),
             (SectionType.CurriculumPreview, 3, """{"title":"What You'll Learn","description":"A structured curriculum covering all essential DSA topics","ctaText":"View Full Curriculum"}"""),
-            (SectionType.Projects, 4, """{"title":"Hands-On Projects","description":"Apply what you learn with real projects","items":[{"title":"Binary Search Tree Implementation","description":"Build a fully functional BST with insert, delete, and traverse"},{"title":"Graph Traversal Explorer","description":"Visualize BFS and DFS on custom graphs"},{"title":"Dynamic Programming Challenges","description":"Solve classic DP problems step by step"}]}"""),
             (SectionType.Testimonials, 5, """{"title":"What Students Say","subtitle":"Join thousands of satisfied learners"}"""),
             (SectionType.Pricing, 6, """{"title":"Simple, Transparent Pricing","subtitle":"One-time payment, lifetime access"}"""),
             (SectionType.FAQ, 7, """{"title":"Frequently Asked Questions","items":[{"question":"Do I need prior programming experience?","answer":"Basic Python knowledge is recommended. We cover fundamentals but assume you can write simple programs."},{"question":"How long do I have access?","answer":"Lifetime access. Once you enroll, the content is yours forever."},{"question":"Are there any prerequisites?","answer":"Familiarity with Python basics (variables, loops, functions) is helpful."}]}"""),
@@ -91,22 +90,10 @@ public static class DbSeeder
             {
                 Id = Guid.NewGuid(),
                 CourseId = courseId,
-                Title = "Self-Paced",
-                Price = 39.99m,
-                Currency = "USD",
-                Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion"]""",
-                StripePriceId = null,
-                IsPopular = false,
-                IsActive = true
-            },
-            new PricingPlan
-            {
-                Id = Guid.NewGuid(),
-                CourseId = courseId,
                 Title = "Full Course Access",
                 Price = 49.99m,
                 Currency = "USD",
-                Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion","Q&A support"]""",
+                Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion","Q&A support","Weekly cohort"]""",
                 StripePriceId = null,
                 IsPopular = true,
                 IsActive = true
@@ -118,7 +105,7 @@ public static class DbSeeder
                 Title = "VIP Bundle",
                 Price = 79.99m,
                 Currency = "USD",
-                Features = """["Everything in Full Course Access","1:1 mentorship session","Priority support","Interview prep materials","Resume review"]""",
+                Features = """["Everything in Full Course Access","Weekly cohort","1:1 mentorship session","Mock Interview","Priority support","Interview prep materials","Resume review"]""",
                 StripePriceId = null,
                 IsPopular = false,
                 IsActive = true
@@ -216,25 +203,25 @@ public static class DbSeeder
         if (course is null) return;
 
         var count = await db.PricingPlans.CountAsync(p => p.CourseId == course.Id, ct);
-        if (count >= 3) return;
+        if (count >= 2) return;
 
         var existingTitles = await db.PricingPlans
             .Where(p => p.CourseId == course.Id)
             .Select(p => p.Title)
             .ToListAsync(ct);
 
-        if (!existingTitles.Contains("Self-Paced"))
+        if (!existingTitles.Contains("Full Course Access"))
         {
             db.PricingPlans.Add(new PricingPlan
             {
                 Id = Guid.NewGuid(),
                 CourseId = course.Id,
-                Title = "Self-Paced",
-                Price = 39.99m,
+                Title = "Full Course Access",
+                Price = 49.99m,
                 Currency = "USD",
-                Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion"]""",
+                Features = """["45+ hours of video content","200+ coding exercises","Lifetime access","Certificate of completion","Q&A support","Weekly cohort"]""",
                 StripePriceId = null,
-                IsPopular = false,
+                IsPopular = true,
                 IsActive = true
             });
         }
@@ -248,7 +235,7 @@ public static class DbSeeder
                 Title = "VIP Bundle",
                 Price = 79.99m,
                 Currency = "USD",
-                Features = """["Everything in Full Course Access","1:1 mentorship session","Priority support","Interview prep materials","Resume review"]""",
+                Features = """["Everything in Full Course Access","Weekly cohort","1:1 mentorship session","Mock Interview","Priority support","Interview prep materials","Resume review"]""",
                 StripePriceId = null,
                 IsPopular = false,
                 IsActive = true
@@ -280,6 +267,14 @@ public static class DbSeeder
             Payload = payload
         });
 
+        await db.SaveChangesAsync(ct);
+    }
+
+    public static async Task EnsureProjectsSectionRemovedAsync(this CourseLandingDbContext db, CancellationToken ct = default)
+    {
+        var projects = await db.Sections.Where(s => s.Type == SectionType.Projects).ToListAsync(ct);
+        if (projects.Count == 0) return;
+        db.Sections.RemoveRange(projects);
         await db.SaveChangesAsync(ct);
     }
 }
