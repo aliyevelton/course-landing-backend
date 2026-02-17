@@ -36,14 +36,14 @@ public static class DbSeeder
         {
             (SectionType.Hero, 0, """{"headline":"Data Structures & Algorithms in Python","subheadline":"The most comprehensive course for acing technical interviews and building strong programming foundations","primaryCtaText":"Enroll Now","primaryCtaUrl":"#pricing","videoUrl":"https://www.youtube.com/embed/sXYvlpmwwAA"}"""),
             (SectionType.TrustMetrics, 1, """{"metrics":[{"label":"Students","value":"200K+"},{"label":"Hours of Content","value":"45+"},{"label":"Exercises","value":"200+"},{"label":"4.8 Rating","value":"4.8/5"}]}"""),
-            (SectionType.Audience, 2, """{"title":"Who Is This Course For?","description":"Whether you're preparing for interviews or leveling up your skills","bullets":["Software developers preparing for technical interviews","Computer science students","Self-taught programmers wanting to strengthen fundamentals","Anyone building a career in software engineering"]}"""),
-            (SectionType.CurriculumPreview, 3, """{"title":"What You'll Learn","description":"A structured curriculum covering all essential DSA topics","ctaText":"View Full Curriculum"}"""),
+            (SectionType.PlatformComparison, 2, """{"title":"Why Buy on AppMillers?","subtitle":"Get more value when you learn directly from us instead of Udemy","ourPlatformName":"AppMillers","competitorName":"Udemy","rows":[{"feature":"24/7 Support","onOurPlatform":true,"onCompetitor":false},{"feature":"Exclusive Community","onOurPlatform":true,"onCompetitor":false},{"feature":"Direct Instructor Access","onOurPlatform":true,"onCompetitor":false},{"feature":"Priority Support","onOurPlatform":true,"onCompetitor":false},{"feature":"Mentorship","onOurPlatform":true,"onCompetitor":false},{"feature":"Mock interviews","onOurPlatform":true,"onCompetitor":false},{"feature":"Weekly cohorts","onOurPlatform":true,"onCompetitor":false},{"feature":"Course Materials","onOurPlatform":true,"onCompetitor":false},{"feature":"Career guidance","onOurPlatform":true,"onCompetitor":false},{"feature":"Lifetime Access","onOurPlatform":true,"onCompetitor":true},{"feature":"Updated Content (instructor-controlled)","onOurPlatform":true,"onCompetitor":false},{"feature":"Certificate of Completion","onOurPlatform":true,"onCompetitor":true}]}"""),
+            (SectionType.Audience, 3, """{"title":"Who Is This Course For?","description":"Whether you're preparing for interviews or leveling up your skills","bullets":["Software developers preparing for technical interviews","Computer science students","Self-taught programmers wanting to strengthen fundamentals","Anyone building a career in software engineering"]}"""),
+            (SectionType.CurriculumPreview, 4, """{"title":"What You'll Learn","description":"A structured curriculum covering all essential DSA topics","ctaText":"View Full Curriculum"}"""),
             (SectionType.Testimonials, 5, """{"title":"What Students Say","subtitle":"Join thousands of satisfied learners"}"""),
             (SectionType.Pricing, 6, """{"title":"Simple, Transparent Pricing","subtitle":"One-time payment, lifetime access"}"""),
             (SectionType.FAQ, 7, """{"title":"Frequently Asked Questions","items":[{"question":"Do I need prior programming experience?","answer":"Basic Python knowledge is recommended. We cover fundamentals but assume you can write simple programs."},{"question":"How long do I have access?","answer":"Lifetime access. Once you enroll, the content is yours forever."},{"question":"Are there any prerequisites?","answer":"Familiarity with Python basics (variables, loops, functions) is helpful."}]}"""),
-            (SectionType.PlatformComparison, 8, """{"title":"Why Buy on AppMillers?","subtitle":"Get more value when you learn directly from us instead of Udemy","ourPlatformName":"AppMillers","competitorName":"Udemy","rows":[{"feature":"24/7 Mentorship","onOurPlatform":true,"onCompetitor":false},{"feature":"Exclusive Community","onOurPlatform":true,"onCompetitor":false},{"feature":"Direct Instructor Access","onOurPlatform":true,"onCompetitor":false},{"feature":"Priority Support","onOurPlatform":true,"onCompetitor":false},{"feature":"Lifetime Access","onOurPlatform":true,"onCompetitor":true},{"feature":"Updated Content (instructor-controlled)","onOurPlatform":true,"onCompetitor":false},{"feature":"Certificate of Completion","onOurPlatform":true,"onCompetitor":true}]}"""),
-            (SectionType.CTA, 9, """{"headline":"Ready to Master DSA?","subheadline":"Start learning today and ace your next technical interview","ctaText":"Get Started","ctaUrl":"#pricing"}"""),
-            (SectionType.ContactUs, 10, """{"title":"Any other questions?","subtitle":"For payment questions or other related questions or if you didn't find a timeslot, please reach out to support@appmillers.com or via below contact form","formTitle":"Contact Us","formSubtitle":"Happy to answer any questions you might have!","email":"support@appmillers.com"}""")
+            (SectionType.CTA, 8, """{"headline":"Ready to Master DSA?","subheadline":"Start learning today and ace your next technical interview","ctaText":"Get Started","ctaUrl":"#pricing"}"""),
+            (SectionType.ContactUs, 9, """{"title":"Any other questions?","subtitle":"For payment questions or other related questions or if you didn't find a timeslot, please reach out to support@appmillers.com or via below contact form","formTitle":"Contact Us","formSubtitle":"Happy to answer any questions you might have!","email":"support@appmillers.com"}""")
         };
 
         foreach (var (type, order, payload) in sections)
@@ -267,6 +267,20 @@ public static class DbSeeder
             Payload = payload
         });
 
+        await db.SaveChangesAsync(ct);
+    }
+
+    public static async Task EnsurePlatformComparisonSectionAsync(this CourseLandingDbContext db, CancellationToken ct = default)
+    {
+        var section = await db.Sections
+            .FirstOrDefaultAsync(s => s.Type == SectionType.PlatformComparison, ct);
+        if (section is null) return;
+
+        var newPayload = """{"title":"Why Buy on AppMillers?","subtitle":"Get more value when you learn directly from us instead of Udemy","ourPlatformName":"AppMillers","competitorName":"Udemy","rows":[{"feature":"24/7 Support","onOurPlatform":true,"onCompetitor":false},{"feature":"Exclusive Community","onOurPlatform":true,"onCompetitor":false},{"feature":"Direct Instructor Access","onOurPlatform":true,"onCompetitor":false},{"feature":"Priority Support","onOurPlatform":true,"onCompetitor":false},{"feature":"Mentorship","onOurPlatform":true,"onCompetitor":false},{"feature":"Mock interviews","onOurPlatform":true,"onCompetitor":false},{"feature":"Weekly cohorts","onOurPlatform":true,"onCompetitor":false},{"feature":"Course Materials","onOurPlatform":true,"onCompetitor":false},{"feature":"Career guidance","onOurPlatform":true,"onCompetitor":false},{"feature":"Lifetime Access","onOurPlatform":true,"onCompetitor":true},{"feature":"Updated Content (instructor-controlled)","onOurPlatform":true,"onCompetitor":false},{"feature":"Certificate of Completion","onOurPlatform":true,"onCompetitor":true}]}""";
+
+        if (section.Payload == newPayload) return;
+
+        section.Payload = newPayload;
         await db.SaveChangesAsync(ct);
     }
 

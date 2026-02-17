@@ -66,6 +66,7 @@ using (var scope = app.Services.CreateScope())
     await db.EnsurePricingPlansAsync();
     await db.EnsureFooterSectionAsync();
     await db.EnsureProjectsSectionRemovedAsync();
+    await db.EnsurePlatformComparisonSectionAsync();
 }
 
 app.Run();
